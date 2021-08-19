@@ -1,0 +1,14 @@
+{
+    "background-color": "#13333f",
+    "beforeLaunchHook": "",
+    "color": "#FFFFFF",
+    "description": "Linux Python",
+    "executablePath": "C:/Python36/python.exe",
+    "iconPath": "",
+    "keepOriginalEnviron": true,
+    "name": "python",
+    "order": "1",
+    "settingEnviron": {
+        "AHOY": "PUPU"
+    }
+}

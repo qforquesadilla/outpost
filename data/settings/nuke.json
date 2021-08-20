@@ -7,7 +7,7 @@
     "iconPath": "",
     "keepGlobalEnv": true,
     "name": "Nuke",
-    "order": "1",
+    "order": "2",
     "settingEnv": {
         "BABALU": [
             "babalu",

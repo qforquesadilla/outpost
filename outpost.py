@@ -41,7 +41,7 @@ class Outpost(object):
         # startup
         self.__startup()
 
-        print('\n\n########\n# OUTPOST #\n########\n')
+        print('\n\n###########\n# OUTPOST #\n###########\n')
         sys.exit(self.__app.exec_())
 
 
@@ -152,8 +152,8 @@ class Outpost(object):
             optionButton.setMaximumWidth(25)
             optionButton.clicked.connect(partial(self.__onOptionPressed, settingName))
 
-            #self.iconQLabel = QLabel()
-            #self.iconQLabel.setPixmap(QtGui.QPixmap(icon))
+            #self.iconQLabel = QLabel()  # TODO: Implement
+            #self.iconQLabel.setPixmap(QtGui.QPixmap(icon))  # TODO: Implement
 
             qHBoxLayout = QHBoxLayout()
             qHBoxLayout.setContentsMargins(0, 2.5, 0, 2.5)

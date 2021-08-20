@@ -574,7 +574,7 @@ color: #FFFFFF;</string>
         <string notr="true">color: #a6a6a6;</string>
        </property>
        <property name="text">
-        <string>Keep Global Envment Variables</string>
+        <string>Keep Global Environment Variables</string>
        </property>
        <property name="checked">
         <bool>true</bool>

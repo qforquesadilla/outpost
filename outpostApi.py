@@ -29,13 +29,14 @@ class OutpostApi(object):
 
         self.__setCurrentDir()
 
-        command = '{}'.format( self.__executablePath)
-        subprocess.Popen(command, shell=True, env=self.environ)
+        command = '{}'.format(self.__executablePath)
+        subprocess.Popen(command, env=self.environ, creationflags=subprocess.CREATE_NEW_CONSOLE)
+        print('\nLaunching {}'.format(command))
 
 
     def __createEnviron(self):
         if self.__keepOriginalEnv:
-            environ = os.environ
+            environ = os.environ  # TODO: This should not change when launching multiple times (prepend/append bug)
         else:
             environ = {}
 

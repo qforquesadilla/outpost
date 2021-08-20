@@ -10,13 +10,13 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>453</height>
+    <height>425</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>400</width>
-    <height>285</height>
+    <height>425</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -60,6 +60,63 @@ color: #FFFFFF;</string>
        </property>
        <property name="text">
         <string>File Name</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="optionS">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>50</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="optionDownPB">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>30</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #313333; color: #f8f8f8;</string>
+       </property>
+       <property name="text">
+        <string>↓</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="optionUpPB">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>30</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #313333; color: #f8f8f8;</string>
+       </property>
+       <property name="text">
+        <string>↑</string>
        </property>
       </widget>
      </item>
@@ -371,7 +428,7 @@ color: #FFFFFF;</string>
     </layout>
    </item>
    <item>
-    <widget class="Line" name="optionSP">
+    <widget class="Line" name="generalSP">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -544,7 +601,7 @@ color: #FFFFFF;</string>
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="settingEnvironAddPB">
+        <widget class="QPushButton" name="settingEnvironRemovePB">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -553,7 +610,7 @@ color: #FFFFFF;</string>
          </property>
          <property name="maximumSize">
           <size>
-           <width>16777215</width>
+           <width>30</width>
            <height>16777215</height>
           </size>
          </property>
@@ -566,7 +623,7 @@ color: #FFFFFF;</string>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="settingEnvironRemovePB">
+        <widget class="QPushButton" name="settingEnvironAddPB">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -575,7 +632,7 @@ color: #FFFFFF;</string>
          </property>
          <property name="maximumSize">
           <size>
-           <width>16777215</width>
+           <width>30</width>
            <height>16777215</height>
           </size>
          </property>
@@ -681,24 +738,19 @@ color: #FFFFFF;
        </attribute>
        <row>
         <property name="text">
-         <string>test1</string>
+         <string/>
         </property>
        </row>
-       <row>
+       <column>
         <property name="text">
-         <string>test2</string>
+         <string>Key</string>
         </property>
-       </row>
-       <row>
+       </column>
+       <column>
         <property name="text">
-         <string>test3</string>
+         <string>Value</string>
         </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>test4</string>
-        </property>
-       </row>
+       </column>
        <column>
         <property name="text">
          <string>Type</string>
@@ -708,16 +760,6 @@ color: #FFFFFF;
           <weight>50</weight>
           <bold>false</bold>
          </font>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Key</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Value</string>
         </property>
        </column>
       </widget>

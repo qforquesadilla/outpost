@@ -10,13 +10,13 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>250</height>
+    <height>188</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>400</width>
-    <height>250</height>
+    <height>175</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -121,14 +121,14 @@ color: #FFFFFF;</string>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>50</width>
+           <width>15</width>
            <height>20</height>
           </size>
          </property>
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="configEnvironAddPB">
+        <widget class="QPushButton" name="configEnvironRemovePB">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -150,7 +150,7 @@ color: #FFFFFF;</string>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="configEnvironRemovePB">
+        <widget class="QPushButton" name="configEnvironAddPB">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -265,24 +265,19 @@ color: #FFFFFF;
        </attribute>
        <row>
         <property name="text">
-         <string>test1</string>
+         <string/>
         </property>
        </row>
-       <row>
+       <column>
         <property name="text">
-         <string>test2</string>
+         <string>Key</string>
         </property>
-       </row>
-       <row>
+       </column>
+       <column>
         <property name="text">
-         <string>test3</string>
+         <string>Value</string>
         </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>test4</string>
-        </property>
-       </row>
+       </column>
        <column>
         <property name="text">
          <string>Type</string>
@@ -292,16 +287,6 @@ color: #FFFFFF;
           <weight>50</weight>
           <bold>false</bold>
          </font>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Key</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Value</string>
         </property>
        </column>
       </widget>

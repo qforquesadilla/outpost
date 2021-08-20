@@ -5,7 +5,7 @@ from functools import partial
 from collections import OrderedDict
 
 from PySide2.QtUiTools import QUiLoader
-from PySide2.QtWidgets import QApplication, QFileDialog, QMessageBox, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QSizePolicy, QSpacerItem
+from PySide2.QtWidgets import QApplication, QFileDialog, QMessageBox, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QSizePolicy, QSpacerItem, QTableWidgetItem
 from PySide2.QtCore import QFile
 
 #from sgUtil import SgUtil
@@ -200,9 +200,13 @@ class Outpost(object):
         self.__mainUi.preferencePB.clicked.connect(self.__onPreferencePressed)
 
         # option ui
+        self.__optionUi.optionUpPB.clicked.connect(partial(self.__onMoveSetting, 'up'))
+        self.__optionUi.optionDownPB.clicked.connect(partial(self.__onMoveSetting, 'down'))
         self.__optionUi.iconPathTB.clicked.connect(partial(self.__onSetPath, self.__optionUi.iconPathLE))
         self.__optionUi.executablePathTB.clicked.connect(partial(self.__onSetPath, self.__optionUi.executablePathLE))
         self.__optionUi.beforeLaunchHookTB.clicked.connect(partial(self.__onSetPath, self.__optionUi.beforeLaunchHookLE))
+        self.__optionUi.settingEnvironAddPB.clicked.connect(partial(self.__onAddEnvPressed, self.__optionUi.settingEnvironTW))
+        self.__optionUi.settingEnvironRemovePB.clicked.connect(partial(self.__onRemoveEnvPressed, self.__optionUi.settingEnvironTW))
 
         self.__optionUi.savePB.clicked.connect(self.__onOptionSavePressed)
         self.__optionUi.cancelPB.clicked.connect(self.__onOptionCancelPressed)
@@ -212,6 +216,9 @@ class Outpost(object):
 
         # preference ui
         self.__preferenceUi.settingsDirTB.clicked.connect(partial(self.__onSetPath, self.__preferenceUi.settingsDirLE))
+        self.__preferenceUi.configEnvironAddPB.clicked.connect(partial(self.__onAddEnvPressed, self.__preferenceUi.configEnvironTW))
+        self.__preferenceUi.configEnvironRemovePB.clicked.connect(partial(self.__onRemoveEnvPressed, self.__preferenceUi.configEnvironTW))
+
         self.__preferenceUi.savePB.clicked.connect(self.__onPreferenceSavePressed)
         self.__preferenceUi.cancelPB.clicked.connect(self.__onPreferenceCancelPressed)
         self.__preferenceUi.logPB.clicked.connect(self.__onPreferenceLogPressed)
@@ -240,7 +247,8 @@ class Outpost(object):
 
     def dummy(self, *args):
         print('ahoy')
-
+        #self.__getTableWidget(self.__optionUi.settingEnvironTW)
+        #self.__setTableWidget(self.__optionUi.settingEnvironTW, {"BOBA": ["boba", "set"]})
 
     def __onLaunchPressed(self, *args):
         name = args[0]
@@ -263,6 +271,7 @@ class Outpost(object):
         self.__setLineEdit(self.__optionUi.backgroundColorLE, settingData['background-color'])
         self.__setLineEdit(self.__optionUi.iconPathLE, settingData['iconPath'])
         self.__setLineEdit(self.__optionUi.executablePathLE, settingData['executablePath'])
+        self.__setTableWidget(self.__optionUi.settingEnvironTW, settingData['settingEnviron'])
 
         self.__optionUi.show()
 
@@ -278,8 +287,24 @@ class Outpost(object):
 
 
     ###################
-    # OPTION COMMANDS #
+    # COMMON COMMANDS #
     ###################
+
+    def __onMoveSetting(self, mode):
+        print(mode)
+        settingNames = list(self.__settings.keys())
+        settingName = self.__getLabel(self.__optionUi.fileNameL)
+        currentIndex = settingNames.index(settingName)
+
+        if mode == 'up':
+            nextIndex = currentIndex + 1
+            if nextIndex > len(settingNames) - 1:
+                nextIndex = 0
+
+        elif mode == 'down':
+            nextIndex = currentIndex - 1
+
+        self.__onOptionPressed(settingNames[nextIndex])
 
 
     def __onSetPath(self, qLineEdit):
@@ -314,6 +339,21 @@ class Outpost(object):
         self.__setLineEdit(qLineEdit, path)
 
 
+    def __onAddEnvPressed(self, qTableWidget):
+        qTableWidget.insertRow(0)
+
+
+    def __onRemoveEnvPressed(self, qTableWidget):
+        row = qTableWidget.currentRow()
+        if row != -1:
+            qTableWidget.removeRow(row)
+
+
+    ###################
+    # OPTION COMMANDS #
+    ###################
+
+
     def __onOptionSavePressed(self):
         settingData = {}
         settingData['order'] = self.__getLineEdit(self.__optionUi.orderLE)
@@ -325,10 +365,7 @@ class Outpost(object):
         settingData['executablePath'] = self.__getLineEdit(self.__optionUi.executablePathLE)
         settingData['beforeLaunchHook'] = self.__getLineEdit(self.__optionUi.beforeLaunchHookLE)
         settingData['keepGlobalEnviron'] = self.__getCheckBox(self.__optionUi.keepOriginalEnvironCB)###############global env vars, launcher level, aplication level
-
-        settingEnviron = {}
-
-
+        settingData['settingEnviron'] = self.__getTableWidget(self.__optionUi.settingEnvironTW)
 
         settingName = self.__getLabel(self.__optionUi.fileNameL)
         settingPath = os.path.normpath(os.path.join(self.__settingsDir, settingName))
@@ -368,7 +405,7 @@ class Outpost(object):
     def __onPreferenceSavePressed(self):
         configData = {}
         configData['settingsDir'] = self.__getLineEdit(self.__preferenceUi.settingsDirLE)
-        #configEnviron
+        configData['configEnviron'] = self.__getTableWidget(self.__preferenceUi.configEnvironTW)
 
         self.__updateJson(self.__configPath, configData)
         # copy settings; copy if folder does not exist
@@ -430,6 +467,53 @@ class Outpost(object):
 
     def __setCheckBox(self, qCheckBox, bool):
         return qCheckBox.setChecked(bool)
+
+    def __getTableWidget(self, qTableWidget):
+        keyValue = {}
+        rowCount = qTableWidget.rowCount()
+        for row in range(rowCount):
+
+            key = qTableWidget.item(row, 0)
+            value = qTableWidget.item(row, 1)
+            typ = qTableWidget.item(row, 2)
+
+            try:
+                key = key.text()
+            except AttributeError:
+                key = ''
+                
+            try:
+                value = value.text()
+            except AttributeError:
+                value = ''
+
+            typ = typ.text()
+
+            keyValue[key] = [value, typ]
+
+        return keyValue
+
+
+    def __setTableWidget(self, qTableWidget, keyValue):
+        for i in range(len(keyValue) - qTableWidget.rowCount()):
+            qTableWidget.insertRow(0)
+
+        row = 0
+        for key, value in keyValue.items():
+
+            keyItem = QTableWidgetItem()
+            valueItem = QTableWidgetItem()
+            typItem = QTableWidgetItem()
+
+            for kvt, item in zip([key, value[0], value[1]], [keyItem, valueItem, typItem]):
+                item.setText(kvt)
+
+            qTableWidget.setItem(row, 0, keyItem)
+            qTableWidget.setItem(row, 1, valueItem)
+            qTableWidget.setItem(row, 2, typItem)
+            row += 1
+
+        return keyValue
 
 
     @staticmethod

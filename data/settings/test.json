@@ -2,12 +2,12 @@
     "background-color": "#13333f",
     "beforeLaunchHook": "",
     "color": "#FFFFFF",
-    "description": "Linux Python",
+    "description": "test",
     "executablePath": "C:/Python36/python.exe",
     "iconPath": "",
     "keepGlobalEnviron": false,
-    "name": "python",
-    "order": "1",
+    "name": "AHAHAH",
+    "order": "3",
     "settingEnviron": {
         "BABALU": [
             "babalu",

@@ -11,7 +11,7 @@
     "settingEnviron": {
         "AHOY": [
             "PUPU",
-            "set"
+            "append"
         ]
     }
 }

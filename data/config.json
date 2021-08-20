@@ -1,6 +1,9 @@
 {
     "configEnviron": {
-        "LOLO": ["lolo", "set"]
+        "PPP": [
+            "ppp",
+            "set"
+        ]
     },
     "settingsDir": "e:\\dev\\qforquesadilla\\outpost\\data\\settings"
 }

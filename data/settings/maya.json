@@ -1,14 +1,14 @@
 {
-    "background-color": "#134143",
+    "background-color": "#1e6974",
     "beforeLaunchHook": "",
-    "color": "#777777",
+    "color": "#FFFFFF",
     "description": "Windows Maya",
     "executablePath": "C:/Program Files/Autodesk/Maya2018/bin/maya.exe",
     "iconPath": "",
-    "keepGlobalEnviron": false,
+    "keepGlobalEnv": true,
     "name": "maya",
     "order": "0",
-    "settingEnviron": {
+    "settingEnv": {
         "": [
             "",
             ""

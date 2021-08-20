@@ -1,14 +1,14 @@
 {
-    "background-color": "#13333f",
+    "background-color": "#326c9b",
     "beforeLaunchHook": "",
-    "color": "#FFFFFF",
-    "description": "Linux Python",
+    "color": "#ffd949",
+    "description": "Python 3.6",
     "executablePath": "C:/Python36/python.exe",
     "iconPath": "",
-    "keepGlobalEnviron": false,
+    "keepGlobalEnv": true,
     "name": "python",
-    "order": "1",
-    "settingEnviron": {
+    "order": "2",
+    "settingEnv": {
         "BABALU": [
             "babalu",
             "set"

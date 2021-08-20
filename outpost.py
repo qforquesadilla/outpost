@@ -8,7 +8,6 @@ from PySide2.QtUiTools import QUiLoader
 from PySide2.QtWidgets import QApplication, QFileDialog, QMessageBox, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QSizePolicy, QSpacerItem, QTableWidgetItem
 from PySide2.QtCore import QFile
 
-#from sgUtil import SgUtil
 
 '''
 Outpost
@@ -20,10 +19,6 @@ class Outpost(object):
     def __init__(self):
         '''
         '''
-
-        # variables
-        #self.__settings = OrderedDict()
-        #self.__demo = True
 
         # config
         self.__toolRootDir = os.path.normpath(os.path.join(os.path.dirname(__file__)))
@@ -38,12 +33,10 @@ class Outpost(object):
 
         self.__setupLogger()
 
-
         # ui & commands
         self.__buildUi()
         self.__buildSettings()
         self.__linkCommands()
-
 
         # startup
         self.__startup()
@@ -66,7 +59,7 @@ class Outpost(object):
 
         # restore values
         self.__settingsDir = configData.get('settingsDir', None)
-        self.__configEnviron = configData.get('configEnviron', None)
+        self.__configEnv = configData.get('configEnv', None)
 
         return True
 
@@ -205,11 +198,11 @@ class Outpost(object):
         self.__optionUi.iconPathTB.clicked.connect(partial(self.__onSetPath, self.__optionUi.iconPathLE))
         self.__optionUi.executablePathTB.clicked.connect(partial(self.__onSetPath, self.__optionUi.executablePathLE))
         self.__optionUi.beforeLaunchHookTB.clicked.connect(partial(self.__onSetPath, self.__optionUi.beforeLaunchHookLE))
-        self.__optionUi.settingEnvironAddPB.clicked.connect(partial(self.__onAddEnvPressed, self.__optionUi.settingEnvironTW))
-        self.__optionUi.settingEnvironRemovePB.clicked.connect(partial(self.__onRemoveEnvPressed, self.__optionUi.settingEnvironTW))
+        self.__optionUi.settingEnvAddPB.clicked.connect(partial(self.__onAddEnvPressed, self.__optionUi.settingEnvTW))
+        self.__optionUi.settingEnvRemovePB.clicked.connect(partial(self.__onRemoveEnvPressed, self.__optionUi.settingEnvTW))
 
-        #color by change
-        #background-color by change
+        # TODO: LE color change
+        # TODO: LE background-color change
 
         self.__optionUi.savePB.clicked.connect(self.__onOptionSavePressed)
         self.__optionUi.cancelPB.clicked.connect(self.__onOptionCancelPressed)
@@ -219,8 +212,8 @@ class Outpost(object):
 
         # preference ui
         self.__preferenceUi.settingsDirTB.clicked.connect(partial(self.__onSetPath, self.__preferenceUi.settingsDirLE))
-        self.__preferenceUi.configEnvironAddPB.clicked.connect(partial(self.__onAddEnvPressed, self.__preferenceUi.configEnvironTW))
-        self.__preferenceUi.configEnvironRemovePB.clicked.connect(partial(self.__onRemoveEnvPressed, self.__preferenceUi.configEnvironTW))
+        self.__preferenceUi.configEnvAddPB.clicked.connect(partial(self.__onAddEnvPressed, self.__preferenceUi.configEnvTW))
+        self.__preferenceUi.configEnvRemovePB.clicked.connect(partial(self.__onRemoveEnvPressed, self.__preferenceUi.configEnvTW))
 
         self.__preferenceUi.savePB.clicked.connect(self.__onPreferenceSavePressed)
         self.__preferenceUi.cancelPB.clicked.connect(self.__onPreferenceCancelPressed)
@@ -230,34 +223,25 @@ class Outpost(object):
 
     def __startup(self):
         '''
-        Check Shotgun credentials and authenticate.
-        Show auth interface if credentials do not exist. 
+        In initial launch, create a folder to store settings JSON.
         '''
         
-        if None in [self.__settingsDir]:
-            self.__authUi.show()
+        if not self.__settingsDir:
+            #self.__startupUi.show()  # TODO: Implement
+            pass
         else:
             self.__mainUi.show()
 
 
     def __setupLogger(self):
-        '''
-        '''
-        pass
-        # create log folder
-        # start logging
+        pass  # TODO: Implement
 
-
-    def dummy(self, *args):
-        print('ahoy')
-        #self.__getTableWidget(self.__optionUi.settingEnvironTW)
-        #self.__setTableWidget(self.__optionUi.settingEnvironTW, {"BOBA": ["boba", "set"]})
 
     def __onLaunchPressed(self, *args):
         name = args[0]
         from outpostApi import OutpostApi
-        outpostApi = OutpostApi(self.__settings[name], self.__configEnviron)
-        return
+        outpostApi = OutpostApi(self.__settings[name], self.__configEnv)
+        print(repr(outpostApi.environ))
         outpostApi.launch()
 
 
@@ -273,18 +257,45 @@ class Outpost(object):
         self.__setLineEdit(self.__optionUi.backgroundColorLE, settingData['background-color'])
         self.__setLineEdit(self.__optionUi.iconPathLE, settingData['iconPath'])
         self.__setLineEdit(self.__optionUi.executablePathLE, settingData['executablePath'])
-        self.__setTableWidget(self.__optionUi.settingEnvironTW, settingData['settingEnviron'])
+        self.__setLineEdit(self.__optionUi.beforeLaunchHookLE, settingData['beforeLaunchHook'])
+        self.__setCheckBox(self.__optionUi.keepGlobalEnvCB, settingData['keepGlobalEnv'])
+        self.__setTableWidget(self.__optionUi.settingEnvTW, settingData['settingEnv'])
+
+        self.__optionUi.fileNameLE.setVisible(False)
+        self.__optionUi.optionUpPB.setVisible(True)
+        self.__optionUi.optionDownPB.setVisible(True)
+        self.__optionUi.openPB.setVisible(True)
+        self.__optionUi.duplicatePB.setVisible(True)
+        self.__optionUi.deletePB.setVisible(True)
 
         self.__optionUi.show()
 
 
     def __onAddPressed(self):
-        print('add')
+        self.__setLabel(self.__optionUi.fileNameL, 'File Name:')
+        self.__setLineEdit(self.__optionUi.orderLE, str(len(self.__settings) + 1))
+        self.__setLineEdit(self.__optionUi.nameLE, '')
+        self.__setLineEdit(self.__optionUi.descriptionLE, '')
+        self.__setLineEdit(self.__optionUi.colorLE, '#FFFFFF')
+        self.__setLineEdit(self.__optionUi.backgroundColorLE, '#313333')
+        self.__setLineEdit(self.__optionUi.iconPathLE, '')
+        self.__setLineEdit(self.__optionUi.executablePathLE, '')
+        self.__setLineEdit(self.__optionUi.beforeLaunchHookLE, '')
+        self.__setCheckBox(self.__optionUi.keepGlobalEnvCB, True)
+        self.__setTableWidget(self.__optionUi.settingEnvTW, {})
+
+        self.__optionUi.fileNameLE.setVisible(True)
+        self.__optionUi.optionUpPB.setVisible(False)
+        self.__optionUi.optionDownPB.setVisible(False)
+        self.__optionUi.openPB.setVisible(False)
+        self.__optionUi.duplicatePB.setVisible(False)
+        self.__optionUi.deletePB.setVisible(False)
+
+        self.__optionUi.show()
 
 
     def __onPreferencePressed(self):
         self.__setLineEdit(self.__preferenceUi.settingsDirLE, self.__settingsDir)
-
         self.__preferenceUi.show()
 
 
@@ -365,18 +376,23 @@ class Outpost(object):
         settingData['iconPath'] = self.__getLineEdit(self.__optionUi.iconPathLE)
         settingData['executablePath'] = self.__getLineEdit(self.__optionUi.executablePathLE)
         settingData['beforeLaunchHook'] = self.__getLineEdit(self.__optionUi.beforeLaunchHookLE)
-        settingData['keepGlobalEnviron'] = self.__getCheckBox(self.__optionUi.keepOriginalEnvironCB)###############global env vars, launcher level, aplication level
-        settingData['settingEnviron'] = self.__getTableWidget(self.__optionUi.settingEnvironTW)
+        settingData['keepGlobalEnv'] = self.__getCheckBox(self.__optionUi.keepGlobalEnvCB)
+        settingData['settingEnv'] = self.__getTableWidget(self.__optionUi.settingEnvTW)
 
         settingName = self.__getLabel(self.__optionUi.fileNameL)
-        settingPath = os.path.normpath(os.path.join(self.__settingsDir, settingName))
-        self.__updateJson(settingPath, settingData)
+        if settingName.endswith('.json'):
+            settingPath = os.path.normpath(os.path.join(self.__settingsDir, settingName))
+            self.__updateJson(settingPath, settingData)
+        else:
+            settingNameValue = self.__getLineEdit(self.__optionUi.fileNameLE)
+            if not settingNameValue:
+                print('Empty string') # TODO: Implement
+                return
+            settingName = '{}.json'.format(settingNameValue)
+            settingPath = os.path.normpath(os.path.join(self.__settingsDir, settingName))
+            self.__writeJson(settingPath, settingData)
 
-        if not self.__registerSettings():
-            return
-
-        self.__buildSettings()
-        self.__optionUi.close()
+        self.__refresh()
 
 
     def __onOptionCancelPressed(self):
@@ -390,12 +406,26 @@ class Outpost(object):
 
 
     def __onOptionDuplicatePressed(self):
-        QMessageBox.question(None, '', 'Duplicate this setting?', QMessageBox.Ok, QMessageBox.Cancel)###############
-
+        result = QMessageBox.question(None, '', 'Duplicate this setting?', QMessageBox.Ok, QMessageBox.Cancel)  # TODO: Implement
+        if result == QMessageBox.Ok:
+            pass
 
 
     def __onOptionDeletePressed(self):
-        pass
+        result = QMessageBox.question(None, '', 'Delete this setting?', QMessageBox.Ok, QMessageBox.Cancel)  # TODO: Implement
+        if result == QMessageBox.Ok:
+            settingName = self.__getLabel(self.__optionUi.fileNameL)
+            settingPath = os.path.normpath(os.path.join(self.__settingsDir, settingName))
+            os.remove(settingPath)
+            self.__refresh()
+
+
+    def __refresh(self):
+        if not self.__registerSettings():
+            return
+
+        self.__buildSettings()
+        self.__optionUi.close()
 
 
     #######################
@@ -406,10 +436,10 @@ class Outpost(object):
     def __onPreferenceSavePressed(self):
         configData = {}
         configData['settingsDir'] = self.__getLineEdit(self.__preferenceUi.settingsDirLE)
-        configData['configEnviron'] = self.__getTableWidget(self.__preferenceUi.configEnvironTW)
+        configData['configEnv'] = self.__getTableWidget(self.__preferenceUi.configEnvTW)
 
         self.__updateJson(self.__configPath, configData)
-        # copy settings; copy if folder does not exist
+        # TODO: Copy setting JSONS to the new folder
 
         self.__preferenceUi.close()
 
@@ -426,30 +456,27 @@ class Outpost(object):
         os.startfile(self.__configPath)
 
 
-
-
-
     ########
     # MISC #
     ########
+
 
     def __readJson(self, jsonPath):
         with open(jsonPath) as d:
             data = json.load(d)
         return data
 
-    def __writeJson(self, jsonPath, dict):
+    def __writeJson(self, jsonPath, keyValue):
         with open(jsonPath, 'w') as d:
-            dump = json.dumps(dict, indent=4, sort_keys=True, ensure_ascii=False)
+            dump = json.dumps(keyValue, indent=4, sort_keys=True, ensure_ascii=False)
             d.write(dump)
 
-    def __updateJson(self, jsonPath, dict):
+    def __updateJson(self, jsonPath, keyValue):
         data = self.__readJson(jsonPath)
-        for key in dict:
-            value = dict[key]
+        for key in keyValue:
+            value = keyValue[key]
             data[key] = value
         self.__writeJson(jsonPath, data)
-
 
     def __getLabel(self, qLabel):
         return qLabel.text()
@@ -481,19 +508,18 @@ class Outpost(object):
             try:
                 key = key.text()
             except AttributeError:
-                continue######################################################### not allow this on ui side
+                continue  # TODO: UI should not allow this to be empty
 
             try:
                 value = value.text()
             except AttributeError:
-                value = ''  
+                value = ''
 
             typ = typ.text()
 
             keyValue[key] = [value, typ]
 
         return keyValue
-
 
     def __setTableWidget(self, qTableWidget, keyValue):
         for i in range(qTableWidget.rowCount() + 1):
@@ -503,12 +529,15 @@ class Outpost(object):
             qTableWidget.insertRow(0)
 
         row = 0
-        for key, value in keyValue.items():
+        for key, valueTyp in keyValue.items():
+            value = valueTyp[0]
+            typ = valueTyp[1]
+            
             keyItem = QTableWidgetItem()
             valueItem = QTableWidgetItem()
             typItem = QTableWidgetItem()
 
-            for kvt, item in zip([key, value[0], value[1]], [keyItem, valueItem, typItem]):
+            for kvt, item in zip([key, value, typ], [keyItem, valueItem, typItem]):
                 item.setText(kvt)
 
             qTableWidget.setItem(row, 0, keyItem)
@@ -522,6 +551,7 @@ class Outpost(object):
     @staticmethod
     def launchOnCommandline(self):
         pass
+
 
 if __name__ == "__main__":
     Outpost()

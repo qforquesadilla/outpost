@@ -64,6 +64,25 @@ color: #FFFFFF;</string>
       </widget>
      </item>
      <item>
+      <widget class="QLineEdit" name="fileNameLE">
+       <property name="minimumSize">
+        <size>
+         <width>45</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #202222; color: #FFFFFF; selection-background-color:  #FFFFFF; selection-color: #202222</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="frame">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="optionS">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -539,12 +558,12 @@ color: #FFFFFF;</string>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="keepOriginalEnvironHBL">
+    <layout class="QHBoxLayout" name="keepOriginalEnvHBL">
      <property name="spacing">
       <number>6</number>
      </property>
      <item>
-      <widget class="QCheckBox" name="keepOriginalEnvironCB">
+      <widget class="QCheckBox" name="keepGlobalEnvCB">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -555,21 +574,24 @@ color: #FFFFFF;</string>
         <string notr="true">color: #a6a6a6;</string>
        </property>
        <property name="text">
-        <string>Keep Global Environment Variables</string>
+        <string>Keep Global Envment Variables</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="settingEnvironVBL" stretch="0,1">
+    <layout class="QVBoxLayout" name="settingEnvVBL" stretch="0,1">
      <item>
-      <layout class="QHBoxLayout" name="settingEnvironHBL">
+      <layout class="QHBoxLayout" name="settingEnvHBL">
        <property name="spacing">
         <number>6</number>
        </property>
        <item>
-        <widget class="QLabel" name="settingEnvironL">
+        <widget class="QLabel" name="settingEnvL">
          <property name="minimumSize">
           <size>
            <width>60</width>
@@ -588,7 +610,7 @@ color: #FFFFFF;</string>
         </widget>
        </item>
        <item>
-        <spacer name="settingEnvironS">
+        <spacer name="settingEnvS">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -601,7 +623,7 @@ color: #FFFFFF;</string>
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="settingEnvironRemovePB">
+        <widget class="QPushButton" name="settingEnvRemovePB">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -623,7 +645,7 @@ color: #FFFFFF;</string>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="settingEnvironAddPB">
+        <widget class="QPushButton" name="settingEnvAddPB">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -647,7 +669,7 @@ color: #FFFFFF;</string>
       </layout>
      </item>
      <item>
-      <widget class="QTableWidget" name="settingEnvironTW">
+      <widget class="QTableWidget" name="settingEnvTW">
        <property name="styleSheet">
         <string notr="true">QHeaderView::section {
     background-color: #313333;

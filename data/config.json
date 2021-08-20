@@ -1,5 +1,5 @@
 {
-    "configEnviron": {
+    "configEnv": {
         "PPP": [
             "ppp",
             "set"

@@ -9,17 +9,17 @@ Outpost API
 
 class OutpostApi(object):
 
-    def __init__(self, settingData, additionalEnviron):
+    def __init__(self, settingData, additionalEnv):
         '''
         "AHOY": ["PUPU", "set"]
         '''
         self.__executablePath = settingData['executablePath']
         self.__beforeLaunchHook = settingData['beforeLaunchHook']
-        self.__keepOriginalEnviron = bool(settingData['keepGlobalEnviron'])
-        self.__settingEnviron = settingData['settingEnviron']
-        self.__additionalEnviron = additionalEnviron
+        self.__keepOriginalEnv = bool(settingData['keepGlobalEnv'])
+        self.__settingEnv = settingData['settingEnv']
+        self.__additionalEnv = additionalEnv
 
-        self.__createEnviron()
+        self.environ = self.__createEnviron()
 
 
     def launch(self):
@@ -27,40 +27,41 @@ class OutpostApi(object):
         if self.__beforeLaunchHook:
             execfile(self.__beforeLaunchHook)
 
+        self.__setCurrentDir()
+
         command = '{}'.format( self.__executablePath)
-
-
-        subprocess.Popen(command, shell=True, env=environ)
+        subprocess.Popen(command, shell=True, env=self.environ)
 
 
     def __createEnviron(self):
-
-        print('self.__settingEnviron:')
-        print(self.__settingEnviron)
-        print('self.__additionalEnviron:')
-        print(self.__additionalEnviron)
-
-        if self.__keepOriginalEnviron:
+        if self.__keepOriginalEnv:
             environ = os.environ
         else:
             environ = {}
 
-        for key, value in self.__additionalEnviron.items():
+        for env in [self.__additionalEnv, self.__settingEnv]:  # TODO: Confirm order
+            for key, valueTyp in env.items():
+                value = valueTyp[0]
+                typ = valueTyp[1]
+                currentValue = environ.get(key, '')
 
-            if value[1] == 'set':
-                environ[key] = value[0]
+                if typ == 'set':
+                    environ[key] = value
+                elif typ == 'prepend':
+                    environ[key] = value + os.path.pathsep + currentValue
+                elif typ == 'append':
+                    environ[key] = currentValue + os.path.pathsep + value
 
-            elif value[1] == 'prepend':
-                environ[key] = value[0] + os.path.pathsep + environ[key]
-
-            elif value[1] == 'append':
-                environ[key] = environ[key] + os.path.pathsep + value[0]
-
-
-        #for self.__settingEnviron
+        return environ
 
 
+    def __setCurrentDir(self):
+        if os.name == 'nt':
+            path = os.environ['USERPROFILE']
+        elif os.name == 'posix':
+            path = os.path.expanduser('~')
 
+        os.chdir(path)
 
 
 if __name__ == "__main__":

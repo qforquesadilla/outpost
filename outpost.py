@@ -5,7 +5,7 @@ from functools import partial
 from collections import OrderedDict
 
 from PySide2.QtUiTools import QUiLoader
-from PySide2.QtWidgets import QApplication, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QSizePolicy, QSpacerItem
+from PySide2.QtWidgets import QApplication, QFileDialog, QMessageBox, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QSizePolicy, QSpacerItem
 from PySide2.QtCore import QFile
 
 #from sgUtil import SgUtil
@@ -29,7 +29,6 @@ class Outpost(object):
         self.__toolRootDir = os.path.normpath(os.path.join(os.path.dirname(__file__)))
         self.__configPath = os.path.normpath(os.path.join(self.__toolRootDir, 'data/config.json'))
         self.__logDir = os.path.normpath(os.path.join(self.__toolRootDir, 'data/log'))
-        #self.__settingsDir = os.path.normpath(os.path.join(self.__toolRootDir, 'data/settingsDir'))#### READ FROM CONFIG
 
         if not self.__setupConfig():
             return
@@ -67,7 +66,7 @@ class Outpost(object):
 
         # restore values
         self.__settingsDir = configData.get('settingsDir', None)
-
+        self.__configEnviron = configData.get('configEnviron', None)
 
         return True
 
@@ -122,7 +121,6 @@ class Outpost(object):
         self.__mainUi = loader.load(mainUiFile)
         self.__preferenceUi = loader.load(preferenceUiFile)
         self.__optionUi = loader.load(optionUiFile)
-
 
 
     def __buildSettings(self):
@@ -194,8 +192,6 @@ class Outpost(object):
         self.__mainUi.settingsSA.setWidget(qWidget)
 
 
-
-
     def __linkCommands(self):
         '''
         '''
@@ -204,8 +200,9 @@ class Outpost(object):
         self.__mainUi.preferencePB.clicked.connect(self.__onPreferencePressed)
 
         # option ui
-        self.__optionUi.iconPathTB.clicked.connect(self.dummy)
-        self.__optionUi.executablePathTB.clicked.connect(self.dummy)
+        self.__optionUi.iconPathTB.clicked.connect(partial(self.__onSetPath, self.__optionUi.iconPathLE))
+        self.__optionUi.executablePathTB.clicked.connect(partial(self.__onSetPath, self.__optionUi.executablePathLE))
+        self.__optionUi.beforeLaunchHookTB.clicked.connect(partial(self.__onSetPath, self.__optionUi.beforeLaunchHookLE))
 
         self.__optionUi.savePB.clicked.connect(self.__onOptionSavePressed)
         self.__optionUi.cancelPB.clicked.connect(self.__onOptionCancelPressed)
@@ -214,11 +211,10 @@ class Outpost(object):
         self.__optionUi.deletePB.clicked.connect(self.__onOptionDeletePressed)
 
         # preference ui
-        self.__preferenceUi.settingsDirTB.clicked.connect(self.dummy)
-        self.__preferenceUi.logDirTB.clicked.connect(self.dummy)
-
+        self.__preferenceUi.settingsDirTB.clicked.connect(partial(self.__onSetPath, self.__preferenceUi.settingsDirLE))
         self.__preferenceUi.savePB.clicked.connect(self.__onPreferenceSavePressed)
         self.__preferenceUi.cancelPB.clicked.connect(self.__onPreferenceCancelPressed)
+        self.__preferenceUi.logPB.clicked.connect(self.__onPreferenceLogPressed)
         self.__preferenceUi.openPB.clicked.connect(self.__onPreferenceOpenPressed)
 
 
@@ -248,13 +244,10 @@ class Outpost(object):
 
     def __onLaunchPressed(self, *args):
         name = args[0]
-        executablePath = self.__settings[name]['executablePath']
-        print(executablePath)
         return
 
-        envVars = 'ahoy' # should combine original and additional env vars into one dict
         from outpostApi import OutpostApi
-        outpostApi = OutpostApi(executablePath, envVars)
+        outpostApi = OutpostApi(self.__settings[name], self.__configEnviron)
         outpostApi.launch()
 
 
@@ -280,7 +273,6 @@ class Outpost(object):
 
     def __onPreferencePressed(self):
         self.__setLineEdit(self.__preferenceUi.settingsDirLE, self.__settingsDir)
-        self.__setLineEdit(self.__preferenceUi.logDirLE, self.__logDir)
 
         self.__preferenceUi.show()
 
@@ -288,6 +280,38 @@ class Outpost(object):
     ###################
     # OPTION COMMANDS #
     ###################
+
+
+    def __onSetPath(self, qLineEdit):
+        objectName = qLineEdit.objectName()
+
+        if objectName == 'iconPathLE':
+            caption = 'File Selection'
+            fileFlt = 'Images (*.png *.xpm *.jpg)'
+    
+        elif objectName == 'executablePathLE':
+            caption = 'File Selection'
+            fileFlt = 'All Files (*)'
+    
+        elif objectName == 'beforeLaunchHookLE':
+            caption = 'File Selection'
+            fileFlt = 'Python Script (*.py)'
+    
+        else:
+            caption = 'Folder Selection'
+            fileFlt = ''
+
+        if caption == 'File Selection':
+            path, flt = QFileDialog.getOpenFileName(caption=caption,
+                                                    dir='.',
+                                                    filter=fileFlt)
+        else:
+            path = QFileDialog.getExistingDirectory()
+
+        if not path:
+            return
+
+        self.__setLineEdit(qLineEdit, path)
 
 
     def __onOptionSavePressed(self):
@@ -299,6 +323,12 @@ class Outpost(object):
         settingData['background-color'] = self.__getLineEdit(self.__optionUi.backgroundColorLE)
         settingData['iconPath'] = self.__getLineEdit(self.__optionUi.iconPathLE)
         settingData['executablePath'] = self.__getLineEdit(self.__optionUi.executablePathLE)
+        settingData['beforeLaunchHook'] = self.__getLineEdit(self.__optionUi.beforeLaunchHookLE)
+        settingData['keepGlobalEnviron'] = self.__getCheckBox(self.__optionUi.keepOriginalEnvironCB)###############global env vars, launcher level, aplication level
+
+        settingEnviron = {}
+
+
 
         settingName = self.__getLabel(self.__optionUi.fileNameL)
         settingPath = os.path.normpath(os.path.join(self.__settingsDir, settingName))
@@ -322,12 +352,12 @@ class Outpost(object):
 
 
     def __onOptionDuplicatePressed(self):
-        pass
+        QMessageBox.question(None, '', 'Duplicate this setting?', QMessageBox.Ok, QMessageBox.Cancel)###############
+
 
 
     def __onOptionDeletePressed(self):
         pass
-
 
 
     #######################
@@ -335,12 +365,9 @@ class Outpost(object):
     #######################
 
 
-
     def __onPreferenceSavePressed(self):
         configData = {}
         configData['settingsDir'] = self.__getLineEdit(self.__preferenceUi.settingsDirLE)
-        #log dir should be stayed with config, add open log button
-        #visibility
         #configEnviron
 
         self.__updateJson(self.__configPath, configData)
@@ -351,6 +378,10 @@ class Outpost(object):
 
     def __onPreferenceCancelPressed(self):
         self.__preferenceUi.close()
+
+
+    def __onPreferenceLogPressed(self):
+        os.startfile(self.__logDir)
 
 
     def __onPreferenceOpenPressed(self):
@@ -393,6 +424,13 @@ class Outpost(object):
 
     def __setLineEdit(self, qLineEdit, value):
         return qLineEdit.setText(value)
+
+    def __getCheckBox(self, qCheckBox):
+        return qCheckBox.isChecked()
+
+    def __setCheckBox(self, qCheckBox, bool):
+        return qCheckBox.setChecked(bool)
+
 
     @staticmethod
     def launchOnCommandline(self):

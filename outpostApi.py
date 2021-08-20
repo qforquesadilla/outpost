@@ -9,25 +9,42 @@ Outpost API
 
 class OutpostApi(object):
 
-    def __init__(self, executablePath, envVars):
+    def __init__(self, settingData, additionalEnviron):
         '''
+        "AHOY": ["PUPU", "set"]
         '''
-        self.__executablePath = executablePath
-        self.__envVars = envVars
+        self.__executablePath = settingData['executablePath']
+        self.__beforeLaunchHook = settingData['beforeLaunchHook']
+        self.__keepOriginalEnviron = bool(settingData['keepOriginalEnviron'])
+        self.__settingEnviron = settingData['settingEnviron']
+        self.__additionalEnviron = additionalEnviron
 
-        self.__setEnvVars()
+
+
+        self.__setEnviron()
 
 
     def launch(self):
-        
+
+        if self.__beforeLaunchHook:
+            execfile(self.__beforeLaunchHook)
+
         command = '{}'.format( self.__executablePath)
-        environ = self.__envVars
+
 
         subprocess.Popen(command, shell=True, env=environ)
 
 
-    def __setEnvVars(self):
-        pass
+    def __setEnviron(self):
+
+        if self.__keepOriginalEnviron:
+            environ = os.environ
+        else:
+            environ = {}
+
+
+
+
 
 
 

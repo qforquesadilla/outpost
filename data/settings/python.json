@@ -5,10 +5,13 @@
     "description": "Linux Python",
     "executablePath": "C:/Python36/python.exe",
     "iconPath": "",
-    "keepOriginalEnviron": true,
+    "keepGlobalEnviron": true,
     "name": "python",
-    "order": "1",
+    "order": "0",
     "settingEnviron": {
-        "AHOY": "PUPU"
+        "AHOY": [
+            "PUPU",
+            "set"
+        ]
     }
 }

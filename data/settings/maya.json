@@ -1,14 +1,17 @@
 {
-    "settingEnviron": {
-        "AHOY": "PUPU"
-    },
     "background-color": "#134143",
     "beforeLaunchHook": "",
     "color": "#777777",
     "description": "Windows Maya",
     "executablePath": "C:/Program Files/Autodesk/Maya2018/bin/maya.exe",
     "iconPath": "",
+    "keepGlobalEnviron": false,
     "name": "maya",
     "order": "0",
-    "keepOriginalEnviron": true
+    "settingEnviron": {
+        "AHOY": [
+            "PUPU",
+            "set"
+        ]
+    }
 }

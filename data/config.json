@@ -1,11 +1,6 @@
 {
     "configEnviron": {
-        "LOLO": "LOLO"
+        "LOLO": ["lolo", "set"]
     },
-    "logDir": "e:\\dev\\qforquesadilla\\outpost\\data\\logDir",
-    "settingsDir": "e:\\dev\\qforquesadilla\\outpost\\data\\settingsDir",
-    "visibility": [
-        1,
-        2
-    ]
+    "settingsDir": "e:\\dev\\qforquesadilla\\outpost\\data\\settings"
 }

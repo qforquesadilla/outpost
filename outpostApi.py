@@ -15,13 +15,11 @@ class OutpostApi(object):
         '''
         self.__executablePath = settingData['executablePath']
         self.__beforeLaunchHook = settingData['beforeLaunchHook']
-        self.__keepOriginalEnviron = bool(settingData['keepOriginalEnviron'])
+        self.__keepOriginalEnviron = bool(settingData['keepGlobalEnviron'])
         self.__settingEnviron = settingData['settingEnviron']
         self.__additionalEnviron = additionalEnviron
 
-
-
-        self.__setEnviron()
+        self.__createEnviron()
 
 
     def launch(self):
@@ -35,14 +33,31 @@ class OutpostApi(object):
         subprocess.Popen(command, shell=True, env=environ)
 
 
-    def __setEnviron(self):
+    def __createEnviron(self):
+
+        print('self.__settingEnviron:')
+        print(self.__settingEnviron)
+        print('self.__additionalEnviron:')
+        print(self.__additionalEnviron)
 
         if self.__keepOriginalEnviron:
             environ = os.environ
         else:
             environ = {}
 
+        for key, value in self.__additionalEnviron.items():
 
+            if value[1] == 'set':
+                environ[key] = value[0]
+
+            elif value[1] == 'prepend':
+                environ[key] = value[0] + os.path.pathsep + environ[key]
+
+            elif value[1] == 'append':
+                environ[key] = environ[key] + os.path.pathsep + value[0]
+
+
+        #for self.__settingEnviron
 
 
 

@@ -208,6 +208,9 @@ class Outpost(object):
         self.__optionUi.settingEnvironAddPB.clicked.connect(partial(self.__onAddEnvPressed, self.__optionUi.settingEnvironTW))
         self.__optionUi.settingEnvironRemovePB.clicked.connect(partial(self.__onRemoveEnvPressed, self.__optionUi.settingEnvironTW))
 
+        #color by change
+        #background-color by change
+
         self.__optionUi.savePB.clicked.connect(self.__onOptionSavePressed)
         self.__optionUi.cancelPB.clicked.connect(self.__onOptionCancelPressed)
         self.__optionUi.openPB.clicked.connect(self.__onOptionOpenPressed)
@@ -252,10 +255,9 @@ class Outpost(object):
 
     def __onLaunchPressed(self, *args):
         name = args[0]
-        return
-
         from outpostApi import OutpostApi
         outpostApi = OutpostApi(self.__settings[name], self.__configEnviron)
+        return
         outpostApi.launch()
 
 
@@ -291,7 +293,6 @@ class Outpost(object):
     ###################
 
     def __onMoveSetting(self, mode):
-        print(mode)
         settingNames = list(self.__settings.keys())
         settingName = self.__getLabel(self.__optionUi.fileNameL)
         currentIndex = settingNames.index(settingName)
@@ -480,12 +481,12 @@ class Outpost(object):
             try:
                 key = key.text()
             except AttributeError:
-                key = ''
-                
+                continue######################################################### not allow this on ui side
+
             try:
                 value = value.text()
             except AttributeError:
-                value = ''
+                value = ''  
 
             typ = typ.text()
 
@@ -495,12 +496,14 @@ class Outpost(object):
 
 
     def __setTableWidget(self, qTableWidget, keyValue):
-        for i in range(len(keyValue) - qTableWidget.rowCount()):
+        for i in range(qTableWidget.rowCount() + 1):
+            qTableWidget.removeRow(0)
+
+        for i in range(len(keyValue)):
             qTableWidget.insertRow(0)
 
         row = 0
         for key, value in keyValue.items():
-
             keyItem = QTableWidgetItem()
             valueItem = QTableWidgetItem()
             typItem = QTableWidgetItem()

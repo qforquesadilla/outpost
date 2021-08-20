@@ -12,6 +12,10 @@
         "BABALU": [
             "babalu",
             "set"
+        ],
+        "POPO": [
+            "popo",
+            "prepend"
         ]
     }
 }

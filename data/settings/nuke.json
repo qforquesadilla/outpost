@@ -1,0 +1,17 @@
+{
+    "background-color": "#3e3e3e",
+    "beforeLaunchHook": "",
+    "color": "#fbb736",
+    "description": "test",
+    "executablePath": "C:/Program Files/Nuke12.0v2/Nuke12.0.exe",
+    "iconPath": "",
+    "keepGlobalEnv": true,
+    "name": "Nuke",
+    "order": "2",
+    "settingEnv": {
+        "BABALU": [
+            "babalu",
+            "set"
+        ]
+    }
+}

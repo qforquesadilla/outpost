@@ -1,0 +1,9 @@
+{
+    "configEnv": {
+        "OUTPOST": [
+            "outpost",
+            "set"
+        ]
+    },
+    "settingsDir": "E:\\dev\\qforquesadilla\\outpost\\data\\settings"
+}

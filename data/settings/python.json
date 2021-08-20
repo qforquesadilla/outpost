@@ -1,0 +1,25 @@
+{
+    "background-color": "#326c9b",
+    "beforeLaunchHook": "",
+    "color": "#FFFFFF",
+    "description": "Python 3.6",
+    "executablePath": "C:/Python36/python.exe",
+    "iconPath": "",
+    "keepGlobalEnv": true,
+    "name": "python",
+    "order": "0",
+    "settingEnv": {
+        "BABALU": [
+            "babalu",
+            "set"
+        ],
+        "OUTPOST": [
+            "pppppp",
+            "set"
+        ],
+        "POPO": [
+            "popo",
+            "prepend"
+        ]
+    }
+}

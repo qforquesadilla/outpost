@@ -2,24 +2,16 @@
     "background-color": "#326c9b",
     "beforeLaunchHook": "",
     "color": "#FFFFFF",
-    "description": "Python 3.6",
+    "description": "[Demo] Python 3.6 - Windows",
     "executablePath": "C:/Python36/python.exe",
     "iconPath": "",
     "keepGlobalEnv": true,
     "name": "python",
     "order": "0",
     "settingEnv": {
-        "BABALU": [
-            "babalu",
-            "set"
-        ],
         "OUTPOST": [
-            "pppppp",
+            "python",
             "set"
-        ],
-        "POPO": [
-            "popo",
-            "prepend"
         ]
     }
 }

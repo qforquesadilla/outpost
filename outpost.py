@@ -206,6 +206,7 @@ class Outpost(object):
 
         self.__optionUi.savePB.clicked.connect(self.__onOptionSavePressed)
         self.__optionUi.cancelPB.clicked.connect(self.__onOptionCancelPressed)
+        self.__optionUi.previewPB.clicked.connect(self.__onOptionPreviewPressed)
         self.__optionUi.openPB.clicked.connect(self.__onOptionOpenPressed)
         self.__optionUi.duplicatePB.clicked.connect(self.__onOptionDuplicatePressed)
         self.__optionUi.deletePB.clicked.connect(self.__onOptionDeletePressed)
@@ -217,8 +218,9 @@ class Outpost(object):
 
         self.__preferenceUi.savePB.clicked.connect(self.__onPreferenceSavePressed)
         self.__preferenceUi.cancelPB.clicked.connect(self.__onPreferenceCancelPressed)
+        self.__preferenceUi.openSettingsPB.clicked.connect(self.__onPreferenceOpenSettingsPressed)
+        self.__preferenceUi.openToolRootPB.clicked.connect(self.__onPreferenceOpenToolRootPressed)
         self.__preferenceUi.logPB.clicked.connect(self.__onPreferenceLogPressed)
-        self.__preferenceUi.openPB.clicked.connect(self.__onPreferenceOpenPressed)
 
 
     def __startup(self):
@@ -238,18 +240,18 @@ class Outpost(object):
 
 
     def __onLaunchPressed(self, *args):
-        name = args[0]
+        settingName = args[0]
         from outpostApi import OutpostApi
-        outpostApi = OutpostApi(self.__settings[name], self.__configEnv)
-        print(repr(outpostApi.environ))
+        outpostApi = OutpostApi(self.__settings[settingName], self.__configEnv)
+        environ = outpostApi.createEnviron()
+        print(self.__formatEnviron(environ))
         outpostApi.launch()
 
-
     def __onOptionPressed(self, *args):
-        name = args[0]
+        settingName = args[0]
 
-        settingData = self.__settings[name]
-        self.__setLabel(self.__optionUi.fileNameL, name)
+        settingData = self.__settings[settingName]
+        self.__setLabel(self.__optionUi.fileNameL, settingName)
         self.__setLineEdit(self.__optionUi.orderLE, str(settingData['order']))
         self.__setLineEdit(self.__optionUi.nameLE, settingData['name'])
         self.__setLineEdit(self.__optionUi.descriptionLE, settingData['description'])
@@ -399,6 +401,16 @@ class Outpost(object):
         self.__optionUi.close()
 
 
+    def __onOptionPreviewPressed(self):
+        settingName = self.__getLabel(self.__optionUi.fileNameL)
+
+        from outpostApi import OutpostApi
+        outpostApi = OutpostApi(self.__settings[settingName], self.__configEnv)
+        environ = outpostApi.createEnviron()
+        print(self.__formatEnviron(environ))
+
+
+
     def __onOptionOpenPressed(self):
         settingName = self.__getLabel(self.__optionUi.fileNameL)
         settingPath = os.path.normpath(os.path.join(self.__settingsDir, settingName))
@@ -448,18 +460,45 @@ class Outpost(object):
         self.__preferenceUi.close()
 
 
+    def __onPreferenceOpenSettingsPressed(self):
+        os.startfile(self.__settingsDir)
+
+
+    def __onPreferenceOpenToolRootPressed(self):
+        os.startfile(self.__toolRootDir)
+
+
     def __onPreferenceLogPressed(self):
         os.startfile(self.__logDir)
-
-
-    def __onPreferenceOpenPressed(self):
-        os.startfile(self.__configPath)
 
 
     ########
     # MISC #
     ########
 
+
+    def __formatEnviron(self, environ):
+        text =''
+        for key in environ:
+            text += '\n\n'
+            text += '='*100
+            text += '\n'
+            text += key
+            text += '\n'
+            text += '='*100
+            text += '\n\n'
+
+            value = environ[key]
+            sep = os.path.pathsep
+            if sep in value:
+                for v in value.split(sep):
+                    if v == '':
+                        continue
+                    text += '{}\n'.format(v)
+            else:
+                text += '{}\n'.format(value)
+
+        return text
 
     def __readJson(self, jsonPath):
         with open(jsonPath) as d:

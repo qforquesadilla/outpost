@@ -19,24 +19,22 @@ class OutpostApi(object):
         self.__settingEnv = settingData['settingEnv']
         self.__additionalEnv = additionalEnv
 
-        self.environ = self.__createEnviron()
-
 
     def launch(self):
-
+        environ = self.createEnviron()
         if self.__beforeLaunchHook:
             execfile(self.__beforeLaunchHook)
 
         self.__setCurrentDir()
 
         command = '{}'.format(self.__executablePath)
-        subprocess.Popen(command, env=self.environ, creationflags=subprocess.CREATE_NEW_CONSOLE)
+        subprocess.Popen(command, env=environ, creationflags=subprocess.CREATE_NEW_CONSOLE)
         print('\nLaunching {}'.format(command))
 
 
-    def __createEnviron(self):
+    def createEnviron(self):
         if self.__keepOriginalEnv:
-            environ = os.environ  # TODO: This should not change when launching multiple times (prepend/append bug)
+            environ = os.environ.copy()  # TODO: This should not change when launching multiple times (prepend/append bug)
         else:
             environ = {}
 

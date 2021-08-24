@@ -22,6 +22,10 @@
   <property name="windowTitle">
    <string>Outpost - Preference</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>icon.png</normaloff>icon.png</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true">background-color: #313333;
 color: #FFFFFF;</string>

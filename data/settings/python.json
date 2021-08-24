@@ -4,9 +4,9 @@
     "color": "#FFFFFF",
     "description": "[Demo] Python 3.6 - Windows",
     "executablePath": "C:/Python36/python.exe",
-    "iconPath": "",
+    "iconPath": "C:/Python36/DLLs/py.ico",
     "keepGlobalEnv": true,
-    "name": "python",
+    "name": "Python",
     "order": "0",
     "settingEnv": {
         "OUTPOST": [

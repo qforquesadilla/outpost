@@ -1,12 +1,16 @@
 import os
 import sys
 import json
+import logging
+from datetime import datetime
 from functools import partial
 from collections import OrderedDict
 
 from PySide2.QtUiTools import QUiLoader
-from PySide2.QtWidgets import QApplication, QFileDialog, QMessageBox, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QSizePolicy, QSpacerItem, QTableWidgetItem
-from PySide2.QtCore import QFile
+from PySide2.QtWidgets import QApplication, QFileDialog, QMessageBox, QWidget, QLabel, QSizePolicy
+from PySide2.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QSpacerItem, QTableWidgetItem
+from PySide2.QtGui import QIcon, QPixmap, QPainter, QColor
+from PySide2.QtCore import QFile, QSize
 
 
 '''
@@ -25,13 +29,13 @@ class Outpost(object):
         self.__configPath = os.path.normpath(os.path.join(self.__toolRootDir, 'data/config.json'))
         self.__logDir = os.path.normpath(os.path.join(self.__toolRootDir, 'data/log'))
 
+        self.__logger = self.__setupLogger()
+
         if not self.__setupConfig():
             return
 
         if not self.__registerSettings():
             return
-
-        self.__setupLogger()
 
         # ui & commands
         self.__buildUi()
@@ -39,7 +43,7 @@ class Outpost(object):
         self.__linkCommands()
 
         # startup
-        self.__startup()
+        self.__mainUi.show()
 
         print('\n\n###########\n# OUTPOST #\n###########\n')
         sys.exit(self.__app.exec_())
@@ -53,8 +57,8 @@ class Outpost(object):
         try:
             configData = self.__readJson(self.__configPath)
         except Exception as err:
-            print('Failed to load config: {}'.format(self.__configPath))
-            print(str(err))
+            self.__logger.warning('Failed to load config: {}'.format(self.__configPath))#################### DIALOG
+            self.__logger.warning(str(err))################################################################# DIALOG
             return False
 
         # restore values
@@ -79,8 +83,8 @@ class Outpost(object):
                 settingData = self.__readJson(settingPath)
                 sortedSettings[settingName] = settingData
             except Exception as err:
-                print('Failed to load config: {}'.format(settingPath))
-                print(str(err))
+                self.__logger.warning('Failed to load setting: {}'.format(settingPath))#############################################
+                self.__logger.warning(str(err))#####################################################################################
 
         sortedSettings = sorted(sortedSettings.items(), key=lambda x: int(x[1]['order']))
         for sortedSetting in sortedSettings:
@@ -115,6 +119,13 @@ class Outpost(object):
         self.__preferenceUi = loader.load(preferenceUiFile)
         self.__optionUi = loader.load(optionUiFile)
 
+        # set icon
+        iconPath = os.path.normpath(os.path.join(self.__toolRootDir, 'interface/icon.png')).replace('\\', '/')
+        iconFile = QIcon(iconPath)
+        self.__mainUi.setWindowIcon(iconFile)
+        self.__preferenceUi.setWindowIcon(iconFile)
+        self.__optionUi.setWindowIcon(iconFile)
+
 
     def __buildSettings(self):
         '''
@@ -132,17 +143,40 @@ class Outpost(object):
             description = settingData['description']
             color = settingData['color']
             backgroundColor = settingData['background-color']
-            
+            iconPath = settingData['iconPath']  # TODO: imagePath?
             launchButton = QPushButton(name.upper())
             launchButton.setMinimumHeight(50)
             launchButton.setMinimumWidth(180)
             launchButton.setMaximumHeight(50)
-            launchButton.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)#
+            #launchButton.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)#
             launchButton.setToolTip(description)
             launchButton.clicked.connect(partial(self.__onLaunchPressed, settingName))
-            
+
+            #if iconPath:
+            #    qPixmap = QPixmap(iconPath)
+            #    qIcon = QIcon(qPixmap)
+            #    launchButton.setIcon(qIcon)
+            #    launchButton.setIconSize(QSize(500, 500))
+
+            if iconPath:
+                qPainter = QPainter()
+                qPixmap = QPixmap(iconPath)
+                #qPainter.begin(qPixmap);
+                #qPainter.setOpacity(0.50)
+                #qPainter.drawPixmap(qPixmap.rect(), qPixmap)
+                print(qPixmap)
+                #qPainter.end()
+                qIcon = QIcon(qPixmap)
+                launchButton.setIcon(qIcon)
+
+
             styleSheet = 'QPushButton {font-size: 18pt; color: %s; background-color: %s} ' % (color, backgroundColor)
-            styleSheet += 'QToolTip {color: #FFFFFF; background-color: #313333; border: 0px;}'
+            styleSheet += 'QToolTip {color: #FFFFFF; background-color: #313333; border: 0px;border-top: 3px transparent;}'
+
+            #if iconPath:
+            #    styleSheet += 'QPushButton{background-image: url(%s); opacity: 0.4}' % iconPath
+            #    styleSheet += 'html{opacity: 0.5;}'
+            
             launchButton.setStyleSheet(styleSheet)
 
             optionButton = QPushButton('⚙️')
@@ -151,9 +185,6 @@ class Outpost(object):
             optionButton.setMaximumHeight(50)
             optionButton.setMaximumWidth(25)
             optionButton.clicked.connect(partial(self.__onOptionPressed, settingName))
-
-            #self.iconQLabel = QLabel()  # TODO: Implement
-            #self.iconQLabel.setPixmap(QtGui.QPixmap(icon))  # TODO: Implement
 
             qHBoxLayout = QHBoxLayout()
             qHBoxLayout.setContentsMargins(0, 2.5, 0, 2.5)
@@ -223,20 +254,21 @@ class Outpost(object):
         self.__preferenceUi.logPB.clicked.connect(self.__onPreferenceLogPressed)
 
 
-    def __startup(self):
-        '''
-        In initial launch, create a folder to store settings JSON.
-        '''
-        
-        if not self.__settingsDir:
-            #self.__startupUi.show()  # TODO: Implement
-            pass
-        else:
-            self.__mainUi.show()
-
-
     def __setupLogger(self):
-        pass  # TODO: Implement
+        currentTime = datetime.now().strftime("%Y%m%d_%H%M%S")
+        logName = "outpost_{}.txt".format(currentTime)
+        logPath = os.path.normpath(os.path.join(self.__logDir, logName))
+        
+        formatter = logging.Formatter('%(levelname)s:%(message)s')
+        handler = logging.FileHandler(logPath)
+        handler.setFormatter(formatter)
+        logger = logging.getLogger("outpostLogger")
+
+        logger.addHandler(handler)
+        logger.setLevel(logging.DEBUG)
+        logger.info("START")
+
+        return logger
 
 
     def __onLaunchPressed(self, *args):
@@ -244,8 +276,9 @@ class Outpost(object):
         from outpostApi import OutpostApi
         outpostApi = OutpostApi(self.__settings[settingName], self.__configEnv)
         environ = outpostApi.createEnviron()
-        print(self.__formatEnviron(environ))
+        prself.__logger.info(self.__formatEnviron(environ))
         outpostApi.launch()
+
 
     def __onOptionPressed(self, *args):
         settingName = args[0]
@@ -298,6 +331,7 @@ class Outpost(object):
 
     def __onPreferencePressed(self):
         self.__setLineEdit(self.__preferenceUi.settingsDirLE, self.__settingsDir)
+        self.__setTableWidget(self.__preferenceUi.configEnvTW, self.__configEnv)
         self.__preferenceUi.show()
 
 
@@ -305,6 +339,7 @@ class Outpost(object):
     # COMMON COMMANDS #
     ###################
 
+    
     def __onMoveSetting(self, mode):
         settingNames = list(self.__settings.keys())
         settingName = self.__getLabel(self.__optionUi.fileNameL)
@@ -326,7 +361,7 @@ class Outpost(object):
 
         if objectName == 'iconPathLE':
             caption = 'File Selection'
-            fileFlt = 'Images (*.png *.xpm *.jpg)'
+            fileFlt = 'Images (*.png *.xpm *.jpg *.ico)'
     
         elif objectName == 'executablePathLE':
             caption = 'File Selection'
@@ -363,6 +398,41 @@ class Outpost(object):
             qTableWidget.removeRow(row)
 
 
+    #######################
+    # PREFERENCE COMMANDS #
+    #######################
+
+
+    def __onPreferenceSavePressed(self):
+        configData = {}
+        configData['settingsDir'] = self.__getLineEdit(self.__preferenceUi.settingsDirLE)
+        configData['configEnv'] = self.__getTableWidget(self.__preferenceUi.configEnvTW)
+
+        if self.__settingsDir != configData['settingsDir']:
+            pass
+            # TODO: Copy setting JSONS to the new folder
+
+        self.__updateJson(self.__configPath, configData)
+        self.__preferenceUi.close()
+        self.__setupConfig()
+
+
+    def __onPreferenceCancelPressed(self):
+        self.__preferenceUi.close()
+
+
+    def __onPreferenceOpenSettingsPressed(self):
+        os.startfile(self.__settingsDir)
+
+
+    def __onPreferenceOpenToolRootPressed(self):
+        os.startfile(self.__toolRootDir)
+
+
+    def __onPreferenceLogPressed(self):
+        os.startfile(self.__logDir)
+
+
     ###################
     # OPTION COMMANDS #
     ###################
@@ -388,7 +458,7 @@ class Outpost(object):
         else:
             settingNameValue = self.__getLineEdit(self.__optionUi.fileNameLE)
             if not settingNameValue:
-                print('Empty string') # TODO: Implement
+                print('Empty string') # TODO: This should be rejected in UI side
                 return
             settingName = '{}.json'.format(settingNameValue)
             settingPath = os.path.normpath(os.path.join(self.__settingsDir, settingName))
@@ -407,8 +477,7 @@ class Outpost(object):
         from outpostApi import OutpostApi
         outpostApi = OutpostApi(self.__settings[settingName], self.__configEnv)
         environ = outpostApi.createEnviron()
-        print(self.__formatEnviron(environ))
-
+        self.__logger.warning(self.__formatEnviron(environ))##################################################DIALOG
 
 
     def __onOptionOpenPressed(self):
@@ -438,38 +507,6 @@ class Outpost(object):
 
         self.__buildSettings()
         self.__optionUi.close()
-
-
-    #######################
-    # PREFERENCE COMMANDS #
-    #######################
-
-
-    def __onPreferenceSavePressed(self):
-        configData = {}
-        configData['settingsDir'] = self.__getLineEdit(self.__preferenceUi.settingsDirLE)
-        configData['configEnv'] = self.__getTableWidget(self.__preferenceUi.configEnvTW)
-
-        self.__updateJson(self.__configPath, configData)
-        # TODO: Copy setting JSONS to the new folder
-
-        self.__preferenceUi.close()
-
-
-    def __onPreferenceCancelPressed(self):
-        self.__preferenceUi.close()
-
-
-    def __onPreferenceOpenSettingsPressed(self):
-        os.startfile(self.__settingsDir)
-
-
-    def __onPreferenceOpenToolRootPressed(self):
-        os.startfile(self.__toolRootDir)
-
-
-    def __onPreferenceLogPressed(self):
-        os.startfile(self.__logDir)
 
 
     ########
@@ -566,6 +603,10 @@ class Outpost(object):
 
         for i in range(len(keyValue)):
             qTableWidget.insertRow(0)
+
+        if len(keyValue) == 0:
+            qTableWidget.insertRow(0)
+            return keyValue
 
         row = 0
         for key, valueTyp in keyValue.items():

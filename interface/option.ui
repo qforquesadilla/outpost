@@ -146,7 +146,7 @@ color: #FFFFFF;</string>
     </layout>
    </item>
    <item>
-    <widget class="Line" name="fileNameSP">
+    <widget class="Line" name="fileNameHL">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -451,7 +451,7 @@ color: #FFFFFF;</string>
     </layout>
    </item>
    <item>
-    <widget class="Line" name="generalSP">
+    <widget class="Line" name="generalHL">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -636,7 +636,7 @@ color: #FFFFFF;</string>
          </property>
          <property name="maximumSize">
           <size>
-           <width>30</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -658,7 +658,7 @@ color: #FFFFFF;</string>
          </property>
          <property name="maximumSize">
           <size>
-           <width>30</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -793,7 +793,7 @@ color: #FFFFFF;
     </layout>
    </item>
    <item>
-    <widget class="Line" name="buttonsSP">
+    <widget class="Line" name="buttonsHL">
      <property name="minimumSize">
       <size>
        <width>0</width>

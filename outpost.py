@@ -25,17 +25,14 @@ class Outpost(object):
         '''
 
         # config
-        self.__toolRootDir = os.path.normpath(os.path.join(os.path.dirname(__file__)))
+        self.__toolRootDir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
         self.__configPath = os.path.normpath(os.path.join(self.__toolRootDir, 'data/config.json'))
-        self.__logDir = os.path.normpath(os.path.join(self.__toolRootDir, 'data/log'))
+        logDir = os.path.normpath(os.path.join(self.__toolRootDir, 'data/log'))
 
-        self.__logger = self.__setupLogger()
+        self.__logger = self.__setupLogger(logDir)
 
-        if not self.__setupConfig():
-            return
-
-        if not self.__registerSettings():
-            return
+        self.__setupConfig()
+        self.__registerSettings()
 
         # ui & commands
         self.__buildUi()
@@ -63,6 +60,8 @@ class Outpost(object):
 
         # restore values
         self.__settingsDir = configData.get('settingsDir', None)
+        if self.__settingsDir == 'demo':
+            self.__settingsDir = os.path.normpath(os.path.join(self.__toolRootDir, 'data/settings'))
         self.__configEnv = configData.get('configEnv', None)
 
         return True
@@ -224,8 +223,8 @@ class Outpost(object):
         self.__mainUi.preferencePB.clicked.connect(self.__onPreferencePressed)
 
         # option ui
-        self.__optionUi.optionUpPB.clicked.connect(partial(self.__onMoveSetting, 'up'))
-        self.__optionUi.optionDownPB.clicked.connect(partial(self.__onMoveSetting, 'down'))
+        self.__optionUi.optionUpPB.clicked.connect(partial(self.__onMoveSetting, self.__optionUi.optionUpPB))
+        self.__optionUi.optionDownPB.clicked.connect(partial(self.__onMoveSetting, self.__optionUi.optionDownPB))
         self.__optionUi.iconPathTB.clicked.connect(partial(self.__onSetPath, self.__optionUi.iconPathLE))
         self.__optionUi.executablePathTB.clicked.connect(partial(self.__onSetPath, self.__optionUi.executablePathLE))
         self.__optionUi.beforeLaunchHookTB.clicked.connect(partial(self.__onSetPath, self.__optionUi.beforeLaunchHookLE))
@@ -254,13 +253,13 @@ class Outpost(object):
         self.__preferenceUi.logPB.clicked.connect(self.__onPreferenceLogPressed)
 
 
-    def __setupLogger(self):
+    def __setupLogger(self, logDir):
         currentTime = datetime.now().strftime("%Y%m%d_%H%M%S")
         logName = "outpost_{}.txt".format(currentTime)
-        logPath = os.path.normpath(os.path.join(self.__logDir, logName))
-        
+        self.__logPath = os.path.normpath(os.path.join(logDir, logName))
+
         formatter = logging.Formatter('%(levelname)s:%(message)s')
-        handler = logging.FileHandler(logPath)
+        handler = logging.FileHandler(self.__logPath)
         handler.setFormatter(formatter)
         logger = logging.getLogger("outpostLogger")
 
@@ -276,7 +275,7 @@ class Outpost(object):
         from outpostApi import OutpostApi
         outpostApi = OutpostApi(self.__settings[settingName], self.__configEnv)
         environ = outpostApi.createEnviron()
-        prself.__logger.info(self.__formatEnviron(environ))
+        self.__logger.info(self.__formatEnviron(environ))
         outpostApi.launch()
 
 
@@ -340,17 +339,18 @@ class Outpost(object):
     ###################
 
     
-    def __onMoveSetting(self, mode):
+    def __onMoveSetting(self, qPushButton):
+        objectName = qPushButton.objectName()
         settingNames = list(self.__settings.keys())
         settingName = self.__getLabel(self.__optionUi.fileNameL)
         currentIndex = settingNames.index(settingName)
 
-        if mode == 'up':
+        if objectName == 'optionUpPB':
             nextIndex = currentIndex + 1
             if nextIndex > len(settingNames) - 1:
                 nextIndex = 0
 
-        elif mode == 'down':
+        elif objectName == 'optionDownPB':
             nextIndex = currentIndex - 1
 
         self.__onOptionPressed(settingNames[nextIndex])
@@ -430,7 +430,8 @@ class Outpost(object):
 
 
     def __onPreferenceLogPressed(self):
-        os.startfile(self.__logDir)
+        print(self.__logPath)
+        os.startfile(self.__logPath)
 
 
     ###################
@@ -502,9 +503,7 @@ class Outpost(object):
 
 
     def __refresh(self):
-        if not self.__registerSettings():
-            return
-
+        self.__registerSettings()
         self.__buildSettings()
         self.__optionUi.close()
 

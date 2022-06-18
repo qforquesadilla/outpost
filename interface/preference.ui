@@ -93,7 +93,7 @@ color: #FFFFFF;</string>
     </layout>
    </item>
    <item>
-    <widget class="Line" name="settingsDirSP">
+    <widget class="Line" name="settingsDirHL">
      <property name="minimumSize">
       <size>
        <width>0</width>

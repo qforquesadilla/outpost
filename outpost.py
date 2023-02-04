@@ -69,6 +69,7 @@ class Outpost(object):
 
     def __registerSettings(self):
         '''
+        Register each app settings...
         '''
 
         self.__settings = OrderedDict()
@@ -151,6 +152,7 @@ class Outpost(object):
             launchButton.setToolTip(description)
             launchButton.clicked.connect(partial(self.__onLaunchPressed, settingName))
 
+            # TODO: Background image
             #if iconPath:
             #    qPixmap = QPixmap(iconPath)
             #    qIcon = QIcon(qPixmap)
@@ -167,7 +169,6 @@ class Outpost(object):
                 #qPainter.end()
                 qIcon = QIcon(qPixmap)
                 launchButton.setIcon(qIcon)
-
 
             styleSheet = 'QPushButton {font-size: 18pt; color: %s; background-color: %s} ' % (color, backgroundColor)
             styleSheet += 'QToolTip {color: #FFFFFF; background-color: #313333; border: 0px;border-top: 3px transparent;}'
@@ -536,15 +537,18 @@ class Outpost(object):
 
         return text
 
+
     def __readJson(self, jsonPath):
         with open(jsonPath) as d:
             data = json.load(d)
         return data
 
+
     def __writeJson(self, jsonPath, keyValue):
         with open(jsonPath, 'w') as d:
             dump = json.dumps(keyValue, indent=4, sort_keys=True, ensure_ascii=False)
             d.write(dump)
+
 
     def __updateJson(self, jsonPath, keyValue):
         data = self.__readJson(jsonPath)
@@ -553,23 +557,30 @@ class Outpost(object):
             data[key] = value
         self.__writeJson(jsonPath, data)
 
+
     def __getLabel(self, qLabel):
         return qLabel.text()
+
 
     def __setLabel(self, qLabel, value):
         return qLabel.setText(value)
 
+
     def __getLineEdit(self, qLineEdit):
         return qLineEdit.text()
+
 
     def __setLineEdit(self, qLineEdit, value):
         return qLineEdit.setText(value)
 
+
     def __getCheckBox(self, qCheckBox):
         return qCheckBox.isChecked()
 
+
     def __setCheckBox(self, qCheckBox, bool):
         return qCheckBox.setChecked(bool)
+
 
     def __getTableWidget(self, qTableWidget):
         keyValue = {}
@@ -595,6 +606,7 @@ class Outpost(object):
             keyValue[key] = [value, typ]
 
         return keyValue
+
 
     def __setTableWidget(self, qTableWidget, keyValue):
         for i in range(qTableWidget.rowCount() + 1):

@@ -324,7 +324,7 @@ color: #FFFFFF;
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="mainButtonsBL" stretch="1,1">
+    <layout class="QHBoxLayout" name="mainButtonsHBL" stretch="1,1">
      <property name="topMargin">
       <number>3</number>
      </property>
@@ -375,7 +375,7 @@ color: #FFFFFF;
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="subButtonsBL" stretch="0,0,0">
+    <layout class="QHBoxLayout" name="subButtonsHBL" stretch="0,0,0">
      <property name="topMargin">
       <number>3</number>
      </property>

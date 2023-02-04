@@ -22,6 +22,7 @@ class Outpost(object):
 
     def __init__(self):
         '''
+        TBA
         '''
 
         # config
@@ -48,14 +49,15 @@ class Outpost(object):
 
     def __setupConfig(self):
         '''
+        TBA
         '''
 
         # load config
         try:
             configData = self.__readJson(self.__configPath)
         except Exception as err:
-            self.__logger.warning('Failed to load config: {}'.format(self.__configPath))#################### DIALOG
-            self.__logger.warning(str(err))################################################################# DIALOG
+            self.__logger.warning('Failed to load config: {}'.format(self.__configPath)) # TODO: Prompt
+            self.__logger.warning(str(err)) # TODO: Prompt
             return False
 
         # restore values
@@ -83,8 +85,8 @@ class Outpost(object):
                 settingData = self.__readJson(settingPath)
                 sortedSettings[settingName] = settingData
             except Exception as err:
-                self.__logger.warning('Failed to load setting: {}'.format(settingPath))#############################################
-                self.__logger.warning(str(err))#####################################################################################
+                self.__logger.warning('Failed to load setting: {}'.format(settingPath)) # TODO: Prompt
+                self.__logger.warning(str(err)) # TODO: Prompt
 
         sortedSettings = sorted(sortedSettings.items(), key=lambda x: int(x[1]['order']))
         for sortedSetting in sortedSettings:
@@ -97,6 +99,7 @@ class Outpost(object):
 
     def __buildUi(self):
         '''
+        TBA
         '''
 
         # define ui file paths
@@ -129,7 +132,9 @@ class Outpost(object):
 
     def __buildSettings(self):
         '''
+        TBA
         '''
+
         scrollBar = self.__mainUi.settingsSA.verticalScrollBar()
         scrollBar.setStyleSheet('QScrollBar {height: 0px;}')
         scrollBar.setStyleSheet('QScrollBar {width: 0px;}')
@@ -218,6 +223,7 @@ class Outpost(object):
 
     def __linkCommands(self):
         '''
+        TBA
         '''
 
         # main ui
@@ -255,6 +261,10 @@ class Outpost(object):
 
 
     def __setupLogger(self, logDir):
+        '''
+        TBA
+        '''
+
         currentTime = datetime.now().strftime("%Y%m%d_%H%M%S")
         logName = "outpost_{}.txt".format(currentTime)
         self.__logPath = os.path.normpath(os.path.join(logDir, logName))
@@ -272,6 +282,10 @@ class Outpost(object):
 
 
     def __onLaunchPressed(self, *args):
+        '''
+        TBA
+        '''
+
         settingName = args[0]
         from outpostApi import OutpostApi
         outpostApi = OutpostApi(self.__settings[settingName], self.__configEnv)
@@ -281,6 +295,10 @@ class Outpost(object):
 
 
     def __onOptionPressed(self, *args):
+        '''
+        TBA
+        '''
+
         settingName = args[0]
 
         settingData = self.__settings[settingName]
@@ -307,6 +325,10 @@ class Outpost(object):
 
 
     def __onAddPressed(self):
+        '''
+        TBA
+        '''
+
         self.__setLabel(self.__optionUi.fileNameL, 'File Name:')
         self.__setLineEdit(self.__optionUi.orderLE, str(len(self.__settings) + 1))
         self.__setLineEdit(self.__optionUi.nameLE, '')
@@ -330,6 +352,10 @@ class Outpost(object):
 
 
     def __onPreferencePressed(self):
+        '''
+        TBA
+        '''
+
         self.__setLineEdit(self.__preferenceUi.settingsDirLE, self.__settingsDir)
         self.__setTableWidget(self.__preferenceUi.configEnvTW, self.__configEnv)
         self.__preferenceUi.show()
@@ -341,6 +367,10 @@ class Outpost(object):
 
     
     def __onMoveSetting(self, qPushButton):
+        '''
+        TBA
+        '''
+
         objectName = qPushButton.objectName()
         settingNames = list(self.__settings.keys())
         settingName = self.__getLabel(self.__optionUi.fileNameL)
@@ -358,6 +388,10 @@ class Outpost(object):
 
 
     def __onSetPath(self, qLineEdit):
+        '''
+        TBA
+        '''
+
         objectName = qLineEdit.objectName()
 
         if objectName == 'iconPathLE':
@@ -390,10 +424,18 @@ class Outpost(object):
 
 
     def __onAddEnvPressed(self, qTableWidget):
+        '''
+        TBA
+        '''
+
         qTableWidget.insertRow(0)
 
 
     def __onRemoveEnvPressed(self, qTableWidget):
+        '''
+        TBA
+        '''
+
         row = qTableWidget.currentRow()
         if row != -1:
             qTableWidget.removeRow(row)
@@ -405,6 +447,10 @@ class Outpost(object):
 
 
     def __onPreferenceSavePressed(self):
+        '''
+        TBA
+        '''
+
         configData = {}
         configData['settingsDir'] = self.__getLineEdit(self.__preferenceUi.settingsDirLE)
         configData['configEnv'] = self.__getTableWidget(self.__preferenceUi.configEnvTW)
@@ -419,18 +465,34 @@ class Outpost(object):
 
 
     def __onPreferenceCancelPressed(self):
+        '''
+        TBA
+        '''
+
         self.__preferenceUi.close()
 
 
     def __onPreferenceOpenSettingsPressed(self):
+        '''
+        TBA
+        '''
+
         os.startfile(self.__settingsDir)
 
 
     def __onPreferenceOpenToolRootPressed(self):
+        '''
+        TBA
+        '''
+
         os.startfile(self.__toolRootDir)
 
 
     def __onPreferenceLogPressed(self):
+        '''
+        TBA
+        '''
+
         print(self.__logPath)
         os.startfile(self.__logPath)
 
@@ -441,6 +503,10 @@ class Outpost(object):
 
 
     def __onOptionSavePressed(self):
+        '''
+        TBA
+        '''
+
         settingData = {}
         settingData['order'] = self.__getLineEdit(self.__optionUi.orderLE)
         settingData['name'] = self.__getLineEdit(self.__optionUi.nameLE)
@@ -470,31 +536,51 @@ class Outpost(object):
 
 
     def __onOptionCancelPressed(self):
+        '''
+        TBA
+        '''
+
         self.__optionUi.close()
 
 
     def __onOptionPreviewPressed(self):
+        '''
+        TBA
+        '''
+
         settingName = self.__getLabel(self.__optionUi.fileNameL)
 
         from outpostApi import OutpostApi
         outpostApi = OutpostApi(self.__settings[settingName], self.__configEnv)
         environ = outpostApi.createEnviron()
-        self.__logger.warning(self.__formatEnviron(environ))##################################################DIALOG
+        self.__logger.warning(self.__formatEnviron(environ)) # TODO: Prompt
 
 
     def __onOptionOpenPressed(self):
+        '''
+        TBA
+        '''
+
         settingName = self.__getLabel(self.__optionUi.fileNameL)
         settingPath = os.path.normpath(os.path.join(self.__settingsDir, settingName))
         os.startfile(settingPath)
 
 
     def __onOptionDuplicatePressed(self):
+        '''
+        TBA
+        '''
+
         result = QMessageBox.question(None, '', 'Duplicate this setting?', QMessageBox.Ok, QMessageBox.Cancel)  # TODO: Implement
         if result == QMessageBox.Ok:
             pass
 
 
     def __onOptionDeletePressed(self):
+        '''
+        TBA
+        '''
+
         result = QMessageBox.question(None, '', 'Delete this setting?', QMessageBox.Ok, QMessageBox.Cancel)  # TODO: Implement
         if result == QMessageBox.Ok:
             settingName = self.__getLabel(self.__optionUi.fileNameL)
@@ -504,6 +590,10 @@ class Outpost(object):
 
 
     def __refresh(self):
+        '''
+        TBA
+        '''
+
         self.__registerSettings()
         self.__buildSettings()
         self.__optionUi.close()
@@ -515,6 +605,10 @@ class Outpost(object):
 
 
     def __formatEnviron(self, environ):
+        '''
+        TBA
+        '''
+
         text =''
         for key in environ:
             text += '\n\n'
@@ -539,18 +633,30 @@ class Outpost(object):
 
 
     def __readJson(self, jsonPath):
+        '''
+        TBA
+        '''
+
         with open(jsonPath) as d:
             data = json.load(d)
         return data
 
 
     def __writeJson(self, jsonPath, keyValue):
+        '''
+        TBA
+        '''
+
         with open(jsonPath, 'w') as d:
             dump = json.dumps(keyValue, indent=4, sort_keys=True, ensure_ascii=False)
             d.write(dump)
 
 
     def __updateJson(self, jsonPath, keyValue):
+        '''
+        TBA
+        '''
+
         data = self.__readJson(jsonPath)
         for key in keyValue:
             value = keyValue[key]
@@ -559,30 +665,58 @@ class Outpost(object):
 
 
     def __getLabel(self, qLabel):
+        '''
+        TBA
+        '''
+
         return qLabel.text()
 
 
     def __setLabel(self, qLabel, value):
+        '''
+        TBA
+        '''
+
         return qLabel.setText(value)
 
 
     def __getLineEdit(self, qLineEdit):
+        '''
+        TBA
+        '''
+
         return qLineEdit.text()
 
 
     def __setLineEdit(self, qLineEdit, value):
+        '''
+        TBA
+        '''
+
         return qLineEdit.setText(value)
 
 
     def __getCheckBox(self, qCheckBox):
+        '''
+        TBA
+        '''
+
         return qCheckBox.isChecked()
 
 
     def __setCheckBox(self, qCheckBox, bool):
+        '''
+        TBA
+        '''
+
         return qCheckBox.setChecked(bool)
 
 
     def __getTableWidget(self, qTableWidget):
+        '''
+        TBA
+        '''
+
         keyValue = {}
         rowCount = qTableWidget.rowCount()
         for row in range(rowCount):
@@ -609,6 +743,10 @@ class Outpost(object):
 
 
     def __setTableWidget(self, qTableWidget, keyValue):
+        '''
+        TBA
+        '''
+
         for i in range(qTableWidget.rowCount() + 1):
             qTableWidget.removeRow(0)
 
@@ -641,8 +779,12 @@ class Outpost(object):
 
     @staticmethod
     def launchOnCommandline(self):
+        '''
+        TBA
+        '''
+
         pass
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     Outpost()

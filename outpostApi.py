@@ -11,8 +11,9 @@ class OutpostApi(object):
 
     def __init__(self, settingData, additionalEnv):
         '''
-        "AHOY": ["PUPU", "set"]
+        TBA
         '''
+
         self.__executablePath = settingData['executablePath']
         self.__beforeLaunchHook = settingData['beforeLaunchHook']
         self.__keepOriginalEnv = bool(settingData['keepGlobalEnv'])
@@ -21,6 +22,10 @@ class OutpostApi(object):
 
 
     def launch(self):
+        '''
+        TBA
+        '''
+        
         environ = self.createEnviron()
         if self.__beforeLaunchHook:
             execfile(self.__beforeLaunchHook)
@@ -33,6 +38,10 @@ class OutpostApi(object):
 
 
     def createEnviron(self):
+        '''
+        TBA
+        '''
+
         if self.__keepOriginalEnv:
             environ = os.environ.copy()  # TODO: This should not change when launching multiple times (prepend/append bug)
         else:
@@ -55,6 +64,10 @@ class OutpostApi(object):
 
 
     def __setCurrentDir(self):
+        '''
+        TBA
+        '''
+
         if os.name == 'nt':
             path = os.environ['USERPROFILE']
         elif os.name == 'posix':
@@ -64,7 +77,6 @@ class OutpostApi(object):
 
 
 if __name__ == "__main__":
-
     executablePath = sys.argv[1]
     envVars = sys.argv[2]
 

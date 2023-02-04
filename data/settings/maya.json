@@ -2,16 +2,16 @@
     "background-color": "#1e6974",
     "beforeLaunchHook": "",
     "color": "#FFFFFF",
-    "description": "Windows Maya",
+    "description": "[Demo] Autodesk Maya 2018 - Windows",
     "executablePath": "C:/Program Files/Autodesk/Maya2018/bin/maya.exe",
-    "iconPath": "",
+    "iconPath": "C:/Program Files/Autodesk/Maya2018/icons/mayaico.png",
     "keepGlobalEnv": true,
     "name": "maya",
     "order": "1",
     "settingEnv": {
-        "": [
-            "",
-            ""
+        "OUTPOST": [
+            "maya",
+            "set"
         ]
     }
 }

@@ -11,32 +11,39 @@ class OutpostApi(object):
 
     def __init__(self, settingData, additionalEnv):
         '''
-        "AHOY": ["PUPU", "set"]
+        TBA
         '''
+
         self.__executablePath = settingData['executablePath']
         self.__beforeLaunchHook = settingData['beforeLaunchHook']
         self.__keepOriginalEnv = bool(settingData['keepGlobalEnv'])
         self.__settingEnv = settingData['settingEnv']
         self.__additionalEnv = additionalEnv
 
-        self.environ = self.__createEnviron()
-
 
     def launch(self):
-
+        '''
+        TBA
+        '''
+        
+        environ = self.createEnviron()
         if self.__beforeLaunchHook:
             execfile(self.__beforeLaunchHook)
 
         self.__setCurrentDir()
 
         command = '{}'.format(self.__executablePath)
-        subprocess.Popen(command, env=self.environ, creationflags=subprocess.CREATE_NEW_CONSOLE)
+        subprocess.Popen(command, env=environ, creationflags=subprocess.CREATE_NEW_CONSOLE)
         print('\nLaunching {}'.format(command))
 
 
-    def __createEnviron(self):
+    def createEnviron(self):
+        '''
+        TBA
+        '''
+
         if self.__keepOriginalEnv:
-            environ = os.environ  # TODO: This should not change when launching multiple times (prepend/append bug)
+            environ = os.environ.copy()  # TODO: This should not change when launching multiple times (prepend/append bug)
         else:
             environ = {}
 
@@ -57,6 +64,10 @@ class OutpostApi(object):
 
 
     def __setCurrentDir(self):
+        '''
+        TBA
+        '''
+
         if os.name == 'nt':
             path = os.environ['USERPROFILE']
         elif os.name == 'posix':
@@ -66,7 +77,6 @@ class OutpostApi(object):
 
 
 if __name__ == "__main__":
-
     executablePath = sys.argv[1]
     envVars = sys.argv[2]
 

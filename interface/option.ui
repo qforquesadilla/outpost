@@ -22,6 +22,10 @@
   <property name="windowTitle">
    <string>Outpost - Option</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>icon.png</normaloff>icon.png</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true">background-color: #313333;
 color: #FFFFFF;</string>
@@ -142,7 +146,7 @@ color: #FFFFFF;</string>
     </layout>
    </item>
    <item>
-    <widget class="Line" name="fileNameSP">
+    <widget class="Line" name="fileNameHL">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -447,7 +451,7 @@ color: #FFFFFF;</string>
     </layout>
    </item>
    <item>
-    <widget class="Line" name="generalSP">
+    <widget class="Line" name="generalHL">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -632,7 +636,7 @@ color: #FFFFFF;</string>
          </property>
          <property name="maximumSize">
           <size>
-           <width>30</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -654,7 +658,7 @@ color: #FFFFFF;</string>
          </property>
          <property name="maximumSize">
           <size>
-           <width>30</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -789,7 +793,7 @@ color: #FFFFFF;
     </layout>
    </item>
    <item>
-    <widget class="Line" name="buttonsSP">
+    <widget class="Line" name="buttonsHL">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -920,6 +924,28 @@ color: #FFFFFF;
        </property>
        <property name="text">
         <string>Open</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="previewPB">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777214</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #313333; color: #f8f8f8;</string>
+       </property>
+       <property name="text">
+        <string>Preview</string>
        </property>
       </widget>
      </item>

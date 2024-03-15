@@ -311,7 +311,7 @@ color: #FFFFFF;
     </layout>
    </item>
    <item>
-    <widget class="Line" name="buttonsSP">
+    <widget class="Line" name="buttonsHL">
      <property name="minimumSize">
       <size>
        <width>0</width>
